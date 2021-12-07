@@ -77,3 +77,9 @@ Nest is [MIT licensed](LICENSE).
 - [Documentation](https://documenter.postman.com/preview/6597817-a51f79b7-db87-4cda-868a-495e0e2cbee4?environment=&versionTag=latest&apiName=CURRENT&version=latest&documentationLayout=classic-double-column&right-sidebar=303030&top-bar=FFFFFF&highlight=EF5B25)
 
 - [Collection](https://documenter.postman.com/preview/6597817-a51f79b7-db87-4cda-868a-495e0e2cbee4?environment=&versionTag=latest&apiName=CURRENT&version=latest&documentationLayout=classic-double-column&right-sidebar=303030&top-bar=FFFFFF&highlight=EF5B25)
+
+## Database With Docker.
+
+```bash
+docker run --name postgres-nest -p 2021:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+```
