@@ -1,16 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { UsersRepository } from './users.repository';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { jwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UsersRepository)
     private usersRepository: UsersRepository,
+    private jwtService: JwtService,
   ) {}
 
   async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    this.usersRepository.createUser(authCredentialsDto);
+    return this.usersRepository.createUser(authCredentialsDto);
+  }
+
+  async signIn(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<{ accessToken: string }> {
+    const { username, password } = authCredentialsDto;
+
+    const user = this.usersRepository.findOne({ username });
+
+    if (user && (await bcrypt.compare(password, (await user).password))) {
+      const payload: jwtPayload = { username };
+      const accessToken: string = await this.jwtService.sign(payload);
+      return { accessToken };
+    } else {
+      throw new UnauthorizedException('check your login credentials.');
+    }
   }
 }
